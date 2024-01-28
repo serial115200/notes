@@ -3,10 +3,12 @@
 ARG VARIANT=3-bullseye
 FROM mcr.microsoft.com/vscode/devcontainers/python:${VARIANT}
 
+COPY requirements.txt ./
+COPY config /home/vscode/
+
 RUN <<EOF
-#sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources
 sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
-python3 -m pip config set global.index-url https://mirrors.ustc.edu.cn/pypi/web/simple
+pip config set global.index-url https://mirrors.ustc.edu.cn/pypi/web/simple
 EOF
 
 RUN <<EOF
@@ -22,10 +24,6 @@ rm -rf /var/lib/apt/lists/*
 EOF
 
 RUN <<EOF
-python3 -m pip install --no-cache-dir --upgrade pip
-python3 -m pip install --no-cache-dir \
-     Sphinx==7.1.2 \
-     Pillow \
-     esbonio \
-     docutils
+pip install --no-cache-dir --upgrade pip
+pip install --no-cache-dir -r requirements.txt
 EOF
