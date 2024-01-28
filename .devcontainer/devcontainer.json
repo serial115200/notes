@@ -1,0 +1,29 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+	"name": "Sphinx",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"VARIANT": "3-bullseye"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"settings": {},
+			"extensions": [
+				"eamodio.gitlens",
+				"EditorConfig.EditorConfig",
+				"lextudio.restructuredtext",
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-vscode.makefile-tools",
+				"ritwickdey.LiveServer",
+				"timonwong.shellcheck",
+				"tintinweb.graphviz-interactive-preview",
+				"trond-snekvik.simple-rst",
+				"twxs.cmake",
+				"zenghongtu.vscode-asciiflow2"
+			]
+		}
+	}
+}
