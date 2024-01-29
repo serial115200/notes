@@ -17,7 +17,21 @@ apt-get install --no-install-recommends --yes \
      graphviz \
      imagemagick \
      make \
-     git
+     git \
+     latexmk \
+     lmodern \
+     fonts-freefont-otf \
+     texlive-latex-recommended \
+     texlive-latex-extra \
+     texlive-fonts-recommended \
+     texlive-fonts-extra \
+     texlive-lang-cjk \
+     texlive-lang-chinese \
+     texlive-lang-japanese \
+     texlive-luatex \
+     texlive-xetex \
+     xindy \
+     tex-gyre
 apt-get autoremove
 apt-get clean
 rm -rf /var/lib/apt/lists/*
