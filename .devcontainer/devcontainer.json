@@ -27,5 +27,6 @@
 			]
 		}
 	},
+	//Enabling SSH connections over HTTPS
 	"postCreateCommand": "cp /home/vscode/config /home/vscode/.ssh/"
 }
