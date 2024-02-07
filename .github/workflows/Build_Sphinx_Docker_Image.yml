@@ -36,10 +36,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       -
-        name: Build and push v1
+        name: Build and push
         uses: docker/build-push-action@v5
         with:
-          push: ${{ github.ref_name == 'v*' }}
+          push: ${{ github.ref_type == 'tag' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           context: .devcontainer/
@@ -54,7 +54,7 @@ jobs:
         name: Build and push pdf
         uses: docker/build-push-action@v5
         with:
-          push: ${{ github.ref_name == 'v*' }}
+          push: ${{ github.ref_type == 'tag' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           context: .devcontainer/
