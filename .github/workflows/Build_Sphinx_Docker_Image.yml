@@ -15,6 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        platforms: [linux/amd64,linux/arm64]
+        dockerfile: [.devcontainer/Dockerfile, .devcontainer/Dockerfile_pdf]
         include:
           - dockerfile: .devcontainer/Dockerfile
             tags: |
@@ -63,7 +65,7 @@ jobs:
           tags: ${{ matrix.tags }}
           file: ${{ matrix.dockerfile }}
           push: ${{ github.ref_type == 'tag' }}
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.platforms }}
       # -
       #   name: Docker Hub Description
       #   uses: peter-evans/dockerhub-description@v3
