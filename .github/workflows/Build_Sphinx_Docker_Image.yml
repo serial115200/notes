@@ -3,12 +3,28 @@ name: Build Sphinx Docker Image
 on:
   push:
     #tags:
-    #  - "*"
+    #  - "**"
   workflow_dispatch:
 
 jobs:
   docker:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dockerfile: .Dockerfile
+            image: |
+              ${{ github.repository }}:latest
+              ${{ github.repository }}:${{ github.ref_name }}
+              ghcr.io/${{ github.actor }}/${{ github.repository }}:latest
+              ghcr.io/${{ github.actor }}/${{ github.repository }}:${{ github.ref_name }}
+          - dockerfile: .Dockerfile_pdf
+            image: |
+              ${{ github.repository }}_pdf:latest
+              ${{ github.repository }}_pdf:${{ github.ref_name }}
+              ghcr.io/${{ github.actor }}/${{ github.repository }}_pdf:latest
+              ghcr.io/${{ github.actor }}/${{ github.repository }}_pdf:${{ github.ref_name }}
     permissions:
       contents: read
       packages: write
@@ -36,19 +52,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       -
+        name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ matrix.image }}
+      -
         name: Build and push
         uses: docker/build-push-action@v5
         with:
           push: ${{ github.ref_name == 'v*' }}
-          context: .devcontainer/
-          platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: |
-            ${{ github.repository }}:latest
-            ${{ github.repository }}:${{ github.ref_name }}
-            ghcr.io/${{ github.actor }}/${{ github.repository }}:latest
-            ghcr.io/${{ github.actor }}/${{ github.repository }}:${{ github.ref_name }}
+          context: .devcontainer/
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
       -
         name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v3
