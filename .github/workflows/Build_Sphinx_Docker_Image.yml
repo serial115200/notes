@@ -9,22 +9,6 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - dockerfile: Dockerfile
-            image: |
-              ${{ github.repository }}:latest
-              ${{ github.repository }}:${{ github.ref_name }}
-              ghcr.io/${{ github.actor }}/${{ github.repository }}:latest
-              ghcr.io/${{ github.actor }}/${{ github.repository }}:${{ github.ref_name }}
-          - dockerfile: Dockerfile_pdf
-            image: |
-              ${{ github.repository }}_pdf:latest
-              ${{ github.repository }}_pdf:${{ github.ref_name }}
-              ghcr.io/${{ github.actor }}/${{ github.repository }}_pdf:latest
-              ghcr.io/${{ github.actor }}/${{ github.repository }}_pdf:${{ github.ref_name }}
     permissions:
       contents: read
       packages: write
@@ -52,17 +36,34 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       -
-        name: Build and push
+        name: Build and push v1
         uses: docker/build-push-action@v5
         with:
           push: ${{ github.ref_name == 'v*' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           context: .devcontainer/
-          file: ${{ matrix.dockerfile }}
           platforms: linux/amd64,linux/arm64
-          tags:  ${{ matrix.image }}
-          labels: ${{ matrix.image }}
+          tags: |
+            ${{ github.repository }}:latest
+            ${{ github.repository }}:${{ github.ref_name }}
+            ghcr.io/${{ github.actor }}/${{ github.repository }}:latest
+            ghcr.io/${{ github.actor }}/${{ github.repository }}:${{ github.ref_name }}
+      -
+        name: Build and push pdf
+        uses: docker/build-push-action@v5
+        with:
+          push: ${{ github.ref_name == 'v*' }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: .devcontainer/
+          file: Dockerfile_pdf
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ github.repository }}_pdf:latest
+            ${{ github.repository }}_pdf:${{ github.ref_name }}
+            ghcr.io/${{ github.actor }}/${{ github.repository }}_pdf:latest
+            ghcr.io/${{ github.actor }}/${{ github.repository }}_pdf:${{ github.ref_name }}
       -
         name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v3
